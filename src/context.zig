@@ -40,6 +40,8 @@ pub const Map = @import("context/Map.zig");
 pub const Optional = @import("context/Optional.zig");
 pub const Iterator = @import("context/Iterator.zig");
 pub const Array = @import("context/Array.zig");
+pub const Taxonomy = @import("context/Taxonomy.zig");
+pub const Term = @import("context/Term.zig");
 
 pub const Value = union(enum) {
     root: *Root,
@@ -62,6 +64,8 @@ pub const Value = union(enum) {
     float: Float,
     iterator: *context.Iterator,
     array: Array,
+    taxonomy: *const Taxonomy,
+    term: Term,
     map_kv: Map.KV,
     err: []const u8,
 
@@ -140,7 +144,9 @@ pub const Value = union(enum) {
             Page.Alternative => .{ .alternative = v },
             Page.ContentSection => .{ .content_section = v },
             Page.Footnote => .{ .footnote = v },
-            *Build => .{ .build = v },
+            *Build, *const Build => .{ .build = v },
+            *const Taxonomy, *Taxonomy => .{ .taxonomy = v },
+            Term => .{ .term = v },
             Git => .{ .git = v },
             Ctx(Value) => .{ .ctx = v },
             Asset => .{ .asset = v },
