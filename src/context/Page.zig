@@ -599,6 +599,23 @@ pub const Footnote = struct {
 };
 
 pub const Dot = true;
+pub fn dynamicDot(self: *const Page, gpa: Allocator, path: []const u8) error{OutOfMemory}!Value {
+    if (std.mem.eql(u8, path, "date") and self._taxonomy != null) {
+        return .{ .err = "date is not available on taxonomy pages" };
+    }
+    inline for (@typeInfo(Page).@"struct".fields) |f| {
+        if (f.name[0] == '_') continue;
+        if (std.mem.eql(u8, f.name, path)) {
+            const by_ref = @typeInfo(f.type) == .@"struct" and
+                @hasDecl(f.type, "PassByRef") and f.type.PassByRef;
+            return if (by_ref)
+                Value.from(gpa, &@field(self, f.name))
+            else
+                Value.from(gpa, @field(self, f.name));
+        }
+    }
+    return .{ .err = "field not found" };
+}
 pub const PassByRef = true;
 
 pub const docs_description =

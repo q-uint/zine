@@ -218,7 +218,7 @@ pub const Builtins = struct {
         pub fn call(
             arr: Array,
             gpa: Allocator,
-            _: *const context.Template,
+            _: *const context.Root,
             _: []const Value,
         ) context.CallError!Value {
             const new = try gpa.alloc(Value, arr._items.len);
