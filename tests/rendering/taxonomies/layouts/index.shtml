@@ -6,5 +6,8 @@
     <ul :loop="$site.taxonomies()">
       <li><a href="$loop.it.link()" :text="$loop.it.name"></a></li>
     </ul>
+    <ul :loop="$site.pages()">
+      <li><a href="$loop.it.link()" :text="$loop.it.title"></a></li>
+    </ul>
   </body>
 </html>

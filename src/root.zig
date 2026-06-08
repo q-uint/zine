@@ -1181,6 +1181,10 @@ pub fn run(
                             gpa.free(slug);
                             continue;
                         }
+                        // Terms keyed by slug: distinct display names that
+                        // slugify to the same value (e.g. "C++"/"C" -> "c",
+                        // "Zig"/"zig") silently merge under the first-seen
+                        // display_name.
                         const gop = try ti.terms.getOrPut(gpa, slug);
                         if (!gop.found_existing) {
                             gop.value_ptr.* = .{

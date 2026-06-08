@@ -302,12 +302,17 @@ pub const Builtins = struct {
             const v = &ctx._meta.build.variants[site._meta.variant_id];
 
             if (args.len == 0) {
-                const page_list = try gpa.alloc(Value, v.pages.items.len);
+                // Synthetic taxonomy pages live in v.pages but belong to no
+                // section, so the emitted count is fewer than v.pages.items.len.
+                var count: usize = if (v.root_index != null) 1 else 0;
+                for (v.sections.items[1..]) |*s| count += s.pages.items.len;
+
+                const page_list = try gpa.alloc(Value, count);
                 errdefer gpa.free(page_list);
 
                 var idx: usize = 0;
                 if (v.root_index) |rid| {
-                    page_list[0] = .{ .page = &v.pages.items[rid] };
+                    page_list[idx] = .{ .page = &v.pages.items[rid] };
                     idx += 1;
                 }
                 for (v.sections.items[1..]) |*s| {
